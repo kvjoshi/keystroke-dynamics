@@ -1,0 +1,225 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<label>
+    <h2>Please input something to test!</h2>
+
+    <textarea id="in"></textarea>
+</label>
+<input type="button" name="next"  value="next" id="next" />
+
+<label>
+    <h2>Please retype</h2>
+    <textarea id="in2"></textarea>
+</label>
+<input type="button" name="finish"  value="finish" id="finish" />
+<script type="text/javascript">
+
+function duration(timestamps) {
+        var last = timestamps.pop();
+        var durations = [];
+        while (timestamps.length) {
+            durations.push(last - (last = timestamps.pop()));
+        }
+        return durations.reverse();
+    }
+
+    function display(mills) {
+        if (mills > 1000)
+            return (mills / 1000) + ' s';
+        return mills + ' ms';
+    }
+
+    var durations = [];
+    var ftime;
+    var ctime;
+    var totalt = 0;
+    var totalt2 = 0;
+
+    $('#in').keydown(function (e) {
+        durations.push($.now());
+    }).keyup(function (e) {
+        var current = durations;
+        current.push($.now());
+        durations = [];
+        var timeElapsed = current[current.length - 1] - current[0];
+        totalt = totalt + timeElapsed;
+
+       /* console.log([
+            ['time elapsed:', display(timeElapsed)].join(' '),['time total:', display(totalt)].join(' ')
+        ].join(' --- '));*/
+        // for-> key press time ,
+        // ['keys duration:', duration(current).map(display)].join(' ')
+    });
+
+    $('#in2').keydown(function (e) {
+        durations.push($.now());
+    }).keyup(function (e) {
+        var current = durations;
+        current.push($.now());
+        durations = [];
+        var timeElapsed2 = current[current.length - 1] - current[0];
+        totalt2 = totalt2 + timeElapsed2;
+
+        //console.log([
+           // ['time elapsed:', display(timeElapsed2)].join(' '),['time total:', display(totalt2)].join(' ')
+      //  ].join(' --- '));
+        // for-> key press time ,
+        // ['keys duration:', duration(current).map(display)].join(' ')
+    });
+
+var ftime=0;
+var ftime2=0;
+var date1=0;
+var date2=0;
+var date21=0;
+var date22=0;
+
+    $('#in').click(function(event){
+
+
+            ftime = event.timeStamp;
+            date1 = ftime.toFixed();
+            //console.log(date1);
+            //console.log("ftime");
+    });
+
+    $('#in2').click(function(event){
+
+
+            ftime2 = event.timeStamp;
+            date21 = ftime2.toFixed();
+            //console.log(date21);
+            //console.log("ftime2");
+    });
+
+
+var ctime =0;
+var cftime=0;
+var nextp=0;
+var cftimeold= 0;
+var totaltold= 0;
+var ftimeold=0;
+var ctimeold = 0;
+    var secondsDifference1;
+$('#next').click(function(event){
+
+ // if (nextp==0){
+            ctime = event.timeStamp;
+            date2 = ctime.toFixed();
+            //console.log(date2);
+            //console.log("ctime");
+            cftime = date2-date1;
+            //console.log(cftime);
+            nextp = nextp + 1 ;
+            cftimeold = cftime;
+            totaltold = totalt;
+            ftimeold = ftime;
+ // }
+ // if (nextp>=1){
+ //     ftime = event.timeStamp;
+ //     ctime = event.timeStamp;
+ //     ctime = ctime - ctimeold;
+ //     console.log(ctime);
+ //     console.log("else");
+ //     console.log("ctime");
+ //     cftime = ctime-ftime;
+ //     console.log(cftime);
+ //     nextp = nextp +1 ;
+ //    if (ctime-ctimeold>0){
+ //        console.log("ok");
+ //        }
+ //    else{
+ //        console.log("not ok");
+ //    }
+        function cf(timestamp1, timestamp2) {
+            var difference = timestamp1 - timestamp2;
+            secondsDifference1 = Math.floor(difference/1000);
+            console.log("Total key press Time :");
+            console.log(secondsDifference1);
+            return secondsDifference1;
+        }
+
+        cf(date2,date1);
+
+    var dataString = 'secondsDifference1=' + secondsDifference1 + '&totalt1=' + totalt;
+    $.ajax({
+        type: "POST",
+        url: "data.php",
+        data: dataString,
+        cache: false,
+        success: function(result) {
+            // alert(result);
+
+        }
+    });
+
+});
+
+var secondsDifference2;
+
+$('#finish').click(function(event){
+
+
+            ctime2 = event.timeStamp;
+            date22 = ctime2.toFixed();
+            //console.log(date22);
+            //console.log("ctime2");
+            cftime2 = date22-date21;
+            //console.log(cftime2);
+
+
+        function cf(timestamp1, timestamp2) {
+            var difference = timestamp1 - timestamp2;
+            secondsDifference2 = Math.floor(difference/1000);
+            console.log("Total Key Press time 2 :");
+            console.log(secondsDifference2);
+            return secondsDifference2;
+        }
+
+        cf(date22,date21);
+        check(secondsDifference1,secondsDifference2);
+        check2(totalt,totalt2)
+});
+
+function check(time1,time2)
+    {
+        var diff;
+        var cal1;
+        var cal2;
+        if(time1 > time2)
+           {
+                diff = time1-time2;
+               cal1=time2*100;
+               cal2=cal1/time1;
+               console.log("Similarity :",cal2,"%");
+           }
+        else{
+            diff= time2-time1;
+            cal1=time1*100;
+               cal2=cal1/time2;
+               console.log("Similarity else :",cal2,"%");
+        }
+    }
+
+
+function check2(totalt,totalt2)
+{
+    var diff2;
+    var cal121;
+    var cal22;
+    if(totalt > totalt2)
+    {
+        diff2 = totalt-totalt2;
+        cal121=totalt2*100;
+        cal22=cal121/totalt;
+        console.log("Key Similarity :",cal22,"%");
+    }
+    else{
+        diff2= totalt2-totalt;
+        cal121=totalt*100;
+        cal22=cal121/totalt2;
+        console.log("Key Similarity else :",cal22,"%");
+    }
+}
+
+    </script>
